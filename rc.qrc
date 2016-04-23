@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>rc/articleList.html</file>
+        <file>rc/jquery.js</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>Article List</title>
+<script src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+<style>
+    body {
+        margin:0px;
+    }
+    #articleItem {
+        padding-left:10px;
+        background:rgb(228, 228, 228);
+        height:40px;
+        line-height:40px;
+    }
+    #articleItem:hover {
+        background:rgb(181, 181, 181);
+    }
+</style>
+</head>
+<body>
+<div id="articleList"></div>
+<script type="text/javascript">
+    function getDataFromUrl(url) {
+         var url = atob(url);
+         $.getJSON(url, function(data) {
+            if (data.showapi_res_code === 0) {
+                $.each(data.showapi_res_body.typeList, function(index, item) {
+                    if (!$('#articleList')) {
+                        $('div#articleList').appendTo($('body'));
+                    }
+                    var str = '<div id="articleItem">{name}</div>';
+                    str = str.replace(/{name}/, item.name);
+                    $('div#articleList').append(str);
+                })
+            } else {
+                alert(data.showapi_res_error);
+            }
+         });
+    };
+</script>
+</body>
+</html>

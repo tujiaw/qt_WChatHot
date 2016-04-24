@@ -8,6 +8,9 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets websockets webchannel
 
+TRANSLATIONS = ch.ts
+RC_FILE = title.rc
+
 TARGET = WChatHot
 TEMPLATE = app
 
@@ -32,4 +35,5 @@ HEADERS  += dialog.h \
 
 FORMS    += dialog.ui
 
-RESOURCES +=
+RESOURCES += \
+    rc.qrc

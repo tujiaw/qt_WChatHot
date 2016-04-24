@@ -13,7 +13,7 @@ public:
     int currentIndex() const;
 
 signals:
-    void sigButtonClicked(int index);
+    void sigButtonClicked(int oldIndex, int newIndex);
 
 private slots:
     void slotTabClicked();

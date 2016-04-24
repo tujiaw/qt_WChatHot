@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>rc/articleList.html</file>
-        <file>rc/qwebchannel.js</file>
+        <file>ch.ts</file>
+        <file>ch.qm</file>
     </qresource>
 </RCC>

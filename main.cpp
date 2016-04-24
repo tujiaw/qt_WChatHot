@@ -3,26 +3,15 @@
 #include <QApplication>
 #include <QtWebSockets/QWebSocketServer>
 #include <QWebChannel>
-#include <QFileInfo>
-#include <QDir>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-//    QString curRunDir = QCoreApplication::applicationDirPath();
-//    QStringList fileList;
-//    fileList << "articleList.html";
-//    fileList << "qwebchannel.js";
-//    QDir dir(curRunDir);
-//    foreach (const QString &file, fileList) {
-//        QFile::remove(curRunDir + "/" + file);
-//        QFileInfo jsFileInfo(curRunDir + "/" + file);
-//        if (!jsFileInfo.exists()) {
-//            QFile::copy(QString(":/rc/%1").arg(file), jsFileInfo.absoluteFilePath());
-//            qDebug() << jsFileInfo.absoluteFilePath();
-//        }
-//    }
+    QTranslator *trans = new QTranslator();
+    trans->load(":/ch.qm");
+    a.installTranslator(trans);
 
     QWebSocketServer server(QStringLiteral("WChatHot"), QWebSocketServer::NonSecureMode);
     if (!server.listen(QHostAddress::LocalHost, 12345)) {

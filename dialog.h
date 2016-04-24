@@ -22,6 +22,7 @@ signals:
     void sigOnTitleClicked(const QString &url);
 
 public slots:
+    void onTest(const QString &str);
     void onItemClicked(int typeId);
     void onTitleClicked(const QString &url);
 };
@@ -37,7 +38,7 @@ public:
 private slots:
     void onResponse(const QByteArray &data);
     void onFinished(bool isSuccess);
-    void onTabClicked(int index);
+    void onTabClicked(int oldIndex, int newIndex);
     void onItemClicked(int typeId);
     void onTitleClicked(const QString &url);
 

@@ -24,13 +24,14 @@ TabWidget::TabWidget(QWidget *parent) : QWidget(parent)
     QHBoxLayout *mlayout = new QHBoxLayout();
     mlayout->setContentsMargins(0, 0, 0, 0);
     mlayout->setSpacing(0);
-    mlayout->addWidget(createTab(0, "list"));
-    mlayout->addWidget(createTab(1, "title"));
-    mlayout->addWidget(createTab(2, "content"));
+    mlayout->addWidget(createTab(0, tr("list")));
+    mlayout->addWidget(createTab(1, tr("title")));
+    mlayout->addWidget(createTab(2, tr("content")));
     mlayout->addStretch();
     this->setLayout(mlayout);
 
     setSelectedStyle(0);
+    this->setStyleSheet("QWidget{font-size:14px; font-weight:bold; color:rgb(75, 75, 75); }");
 }
 
 void TabWidget::setSelectedStyle(int index)
@@ -49,9 +50,10 @@ void TabWidget::slotTabClicked()
 {
     QPushButton *button = static_cast<QPushButton*>(sender());
     if (button) {
-        int index = button->property("index").toInt();
-        emit sigButtonClicked(index);
-        setSelectedStyle(index);
+        int oldIndex = m_currentIndex;
+        int newIndex = button->property("index").toInt();
+        setSelectedStyle(newIndex);
+        emit sigButtonClicked(oldIndex, newIndex);
     }
 }
 

@@ -8,15 +8,48 @@
 <style>
     body {
         margin:0px;
+        font-family:"Microsoft YaHei";
+        background:rgb(228, 228, 228);
     }
     div.articleItem {
         padding-left:10px;
-        background:rgb(228, 228, 228);
         height:40px;
         line-height:40px;
+        cursor:pointer;
     }
     div.articleItem:hover {
         background:rgb(181, 181, 181);
+    }
+    div.articleTitle {
+        height:60px;
+        padding-left:10px;
+        cursor:pointer;
+    }
+    div.articleTitle:hover {
+        background:rgb(181, 181, 181);
+    }
+    img#contentImg {
+        width:55px;
+        height:55px;
+        float:left;
+    }
+    div#contentRight {
+        padding-top:10px;
+        padding-left:15px;
+        overflow:hidden;
+    }
+    div#userName {
+        color:#000000;
+        font-size:13px;
+        font-weight:bold;
+        padding-bottom:5px;
+    }
+    div#title {
+        color:rgb(39, 40, 34);
+        font-size:12px;
+    }
+    div#clearBoth {
+        clear:both;
     }
 </style>
 </head>
@@ -32,7 +65,7 @@
                     var str = '<div class="articleItem" value="{id}" onclick="articleItemClick(this)">{name}</div>';
                     str = str.replace(/{name}/, item.name);
                     str = str.replace(/{id}/, item.id);
-                    $('div#content').append(str);
+                    $('div#content').prepend(str);
                 });
             } else {
                 alert(data.showapi_res_error);
@@ -47,8 +80,14 @@
                 clearAll();
                 var pagebean = data.showapi_res_body.pagebean;
                 $.each(pagebean.contentlist, function(index, item) {
-                    var str = '<div class="articleTitle" value="{url}" onclick="articleTitleClick(this)">{title}</div>';
+                    var str = '<div class="articleTitle" value="{url}" onclick="articleTitleClick(this)">' +
+                    '<img id="contentImg" src="{contentImg}"/>' +
+                    '<div id="contentRight"><div id="userName">{userName}</div><div id="title">{title}</div></div>' +
+                    '</div>' +
+                    '<div id="clearBoth"></div>';
                     str = str.replace(/{url}/, item.url);
+                    str = str.replace(/{contentImg}/, item.contentImg);
+                    str = str.replace(/{userName}/, item.userName);
                     str = str.replace(/{title}/, item.title);
                     $('div#content').append(str);
                 });
@@ -86,6 +125,13 @@
             new QWebChannel(socket, function(channel) {
                 window.webCallback = channel.objects.webCallback;
             });
+        }
+    }
+
+    window.onscroll = function() {
+        var pos = parseInt($(this).scrollTop()) + parseInt($(this).height());
+        if (pos == $('div#content').height()) {
+            webCallback.onTest('xxxxx');
         }
     }
 

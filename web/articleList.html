@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>Article List</title>
+<script src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+<script src="./qwebchannel.js"></script>
+<style>
+    body {
+        margin:0px;
+    }
+    div.articleItem {
+        padding-left:10px;
+        background:rgb(228, 228, 228);
+        height:40px;
+        line-height:40px;
+    }
+    div.articleItem:hover {
+        background:rgb(181, 181, 181);
+    }
+</style>
+</head>
+<body>
+<div id="content"></div>
+<script type="text/javascript">
+    function showArticleList(url) {
+         var url = atob(url);
+         $.getJSON(url, function(data) {
+            if (data.showapi_res_code === 0) {
+                clearAll();
+                $.each(data.showapi_res_body.typeList, function(index, item) {
+                    var str = '<div class="articleItem" value="{id}" onclick="articleItemClick(this)">{name}</div>';
+                    str = str.replace(/{name}/, item.name);
+                    str = str.replace(/{id}/, item.id);
+                    $('div#content').append(str);
+                });
+            } else {
+                alert(data.showapi_res_error);
+            }
+         });
+    };
+
+    function showArticleTitle(url) {
+        var url = atob(url);
+        $.getJSON(url, function(data) {
+            if (data.showapi_res_code === 0) {
+                clearAll();
+                var pagebean = data.showapi_res_body.pagebean;
+                $.each(pagebean.contentlist, function(index, item) {
+                    var str = '<div class="articleTitle" value="{url}" onclick="articleTitleClick(this)">{title}</div>';
+                    str = str.replace(/{url}/, item.url);
+                    str = str.replace(/{title}/, item.title);
+                    $('div#content').append(str);
+                });
+            }
+        });
+    }
+
+    function articleItemClick(self) {
+        webCallback.onItemClicked($(self).attr('value'));
+    }
+
+    function articleTitleClick(self) {
+        webCallback.onTitleClicked($(self).attr('value'));
+    }
+
+    function clearAll() {
+        $('#content').empty();
+    }
+
+    function initWebSocket() {
+        var baseUrl;
+        if (location.search != "") {
+            baseUrl = (/[?&]webChannelBaseUrl=([A-Za-z0-9\-:/\.]+)/.exec(location.search)[1]);   
+        } else {
+            baseUrl = "ws://localhost:12345";
+        }
+        var socket = new WebSocket(baseUrl);
+        socket.onclose = function() {
+
+        };
+        socket.onerror = function(error) {
+            alert('web channel error:' + error);
+        };
+        socket.onopen = function() {
+            new QWebChannel(socket, function(channel) {
+                window.webCallback = channel.objects.webCallback;
+            });
+        }
+    }
+
+</script>
+</body>
+</html>

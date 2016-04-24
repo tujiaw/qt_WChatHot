@@ -33,6 +33,18 @@ TabWidget::TabWidget(QWidget *parent) : QWidget(parent)
     setSelectedStyle(0);
 }
 
+void TabWidget::setSelectedStyle(int index)
+{
+    m_currentIndex = index;
+    for (int i=0; i<m_labelList.count(); i++) {
+        if (i == index) {
+            m_labelList[i]->setStyleSheet("background:#ff0000;");
+        } else {
+            m_labelList[i]->setStyleSheet("background:transparent;");
+        }
+    }
+}
+
 void TabWidget::slotTabClicked()
 {
     QPushButton *button = static_cast<QPushButton*>(sender());
@@ -43,13 +55,7 @@ void TabWidget::slotTabClicked()
     }
 }
 
-void TabWidget::setSelectedStyle(int index)
+int TabWidget::currentIndex() const
 {
-    for (int i=0; i<m_labelList.count(); i++) {
-        if (i == index) {
-            m_labelList[i]->setStyleSheet("background:#ff0000;");
-        } else {
-            m_labelList[i]->setStyleSheet("background:transparent;");
-        }
-    }
+    return m_currentIndex;
 }

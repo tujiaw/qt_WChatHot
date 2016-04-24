@@ -30,4 +30,19 @@ public:
     QString getUrl();
 };
 
+class ArticleTitleRequest : public Request
+{
+    Q_OBJECT
+public:
+    explicit ArticleTitleRequest(QObject *parent=0);
+    explicit ArticleTitleRequest(int typeId, QObject *parent=0);
+    QString getUrl();
+
+private:
+    void init();
+
+private:
+    int m_typeId;
+};
+
 #endif // REQUESTHEADER_H

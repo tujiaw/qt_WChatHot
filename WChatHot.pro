@@ -6,32 +6,30 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webenginewidgets websockets webchannel
 
 TARGET = WChatHot
 TEMPLATE = app
-
 
 SOURCES += main.cpp\
         dialog.cpp \
     webengineview.cpp \
     json.cpp \
-    articlelistdata.cpp \
     request.cpp \
     response.cpp \
     netmanager.cpp \
-    tabwidget.cpp
+    tabwidget.cpp \
+    websockettransport.cpp
 
 HEADERS  += dialog.h \
     webengineview.h \
     json.h \
-    articlelistdata.h \
     request.h \
     response.h \
     netmanager.h \
-    tabwidget.h
+    tabwidget.h \
+    websockettransport.h
 
 FORMS    += dialog.ui
 
-RESOURCES += \
-    rc.qrc
+RESOURCES +=

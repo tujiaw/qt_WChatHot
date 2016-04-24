@@ -50,3 +50,40 @@ QString ArticleListRequest::getUrl()
     }
     return result;
 }
+
+ArticleTitleRequest::ArticleTitleRequest(QObject *parent) : Request(parent)
+{
+    init();
+}
+
+ArticleTitleRequest::ArticleTitleRequest(int typeId, QObject *parent) : Request(parent)
+{
+    init();
+    m_typeId = typeId;
+}
+
+void ArticleTitleRequest::init()
+{
+    m_address = "http://route.showapi.com/582-2";
+    m_signMethod = "md5";
+    m_appId = 17262;
+    m_secret = "21b693f98bd64e71a9bdbb5f7c76659c";
+    m_typeId = -1;
+}
+
+QString ArticleTitleRequest::getUrl()
+{
+    QList<QPair<QString, QString>> argv;
+    argv << QPair<QString, QString>("showapi_appid", QString::number(m_appId));
+    argv << QPair<QString, QString>("showapi_timestamp", m_timestamp);
+    if (m_typeId >= 0) {
+        argv << QPair<QString, QString>("typeId", QString::number(m_typeId));
+    }
+
+    m_sign = getMd5(argv, m_secret);
+    QString result = m_address + "?showapi_sign=" + m_sign;
+    for (auto iter = argv.begin(); iter != argv.end(); ++iter) {
+        result += ("&" + (*iter).first + "=" + (*iter).second);
+    }
+    return result;
+}

@@ -9,6 +9,11 @@ Request::Request(QObject *parent)
     m_timestamp = getTimestamp();
 }
 
+QString Request::address() const
+{
+    return m_address;
+}
+
 QString Request::getTimestamp()
 {
     QDateTime dateTime = QDateTime::currentDateTime();

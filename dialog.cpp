@@ -80,11 +80,17 @@ void Dialog::onTabClicked(int oldIndex, int newIndex)
     m_webView->setVisible(newIndex != 2);
     m_webArticle->setVisible(newIndex == 2);
 
-    if (0 == newIndex && 2 != oldIndex) {
-        requestCategoryList();
-    } else if (1 == newIndex && 2 != oldIndex) {
+    qDebug() << "oldIndex:" << oldIndex << ",newIndex:" << newIndex;
+    if (0 == newIndex) {
+        ArticleListRequest request;
+        if (!m_webView->url().toString().contains(request.address())) {
+            requestCategoryList();
+        }
+    } else if (1 == newIndex) {
         m_titleRequest.setPage(1);
-        requestTitleList();
+        if (!m_webView->url().toString().contains(m_titleRequest.address())) {
+            requestTitleList();
+        }
     }
 }
 

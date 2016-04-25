@@ -8,6 +8,7 @@ class Request : public QObject
     Q_OBJECT
 public:
     explicit Request(QObject *parent = 0);
+    QString address() const;
 
     virtual QString getUrl() = 0;
     static QString getTimestamp();

@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QWebChannel>
+#include <QMessageBox>
 
 WebCallback::WebCallback(QObject *parent) : QObject(parent)
 {
@@ -69,10 +70,14 @@ void Dialog::onResponse(const QByteArray &data)
 
 void Dialog::onFinished(bool isSuccess)
 {
-    m_webView->page()->webChannel()->registerObject(QStringLiteral("webCallback"), m_webCallback);
-    m_webView->page()->runJavaScript("initWebSocket()",[this](const QVariant &data) {
-        onTabClicked(0, 0);
-    });
+    if (isSuccess) {
+        m_webView->page()->webChannel()->registerObject(QStringLiteral("webCallback"), m_webCallback);
+        m_webView->page()->runJavaScript("initWebSocket()",[this](const QVariant &data) {
+            onTabClicked(0, 0);
+        });
+    } else {
+        QMessageBox::warning(this, tr("error"), tr("load html failed"));
+    }
 }
 
 void Dialog::onTabClicked(int oldIndex, int newIndex)

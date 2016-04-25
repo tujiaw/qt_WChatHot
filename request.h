@@ -35,14 +35,25 @@ class ArticleTitleRequest : public Request
     Q_OBJECT
 public:
     explicit ArticleTitleRequest(QObject *parent=0);
-    explicit ArticleTitleRequest(int typeId, QObject *parent=0);
+    explicit ArticleTitleRequest(int typeId, const QString &key, int page, QObject *parent=0);
     QString getUrl();
+
+    void setTypeId(int typeId) { m_typeId = typeId; }
+    int typeId() const { return m_typeId; }
+
+    void setKey(const QString &key) { m_key = key; }
+    QString key() const { return m_key; }
+
+    void setPage(int page) { m_page = page; }
+    int page() const { return m_page; }
 
 private:
     void init();
 
 private:
     int m_typeId;
+    QString m_key;
+    int m_page;
 };
 
 #endif // REQUESTHEADER_H

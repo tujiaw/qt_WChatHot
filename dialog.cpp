@@ -1,8 +1,6 @@
 #include "dialog.h"
 #include "ui_dialog.h"
 #include "webengineview.h"
-#include "request.h"
-#include "response.h"
 #include "netmanager.h"
 
 #include <QFile>
@@ -28,9 +26,14 @@ void WebCallback::onTitleClicked(const QString &url)
     emit sigOnTitleClicked(url);
 }
 
+void WebCallback::onTitleSCrollToBottom()
+{
+    emit sigOnTitleScrollToBottom();
+}
+
 Dialog::Dialog(QWebChannel *webChannel, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::Dialog), m_curTypeId(0)
+    ui(new Ui::Dialog)
 {
     ui->setupUi(this);
     m_webView = new WebEngineView(this);
@@ -48,6 +51,7 @@ Dialog::Dialog(QWebChannel *webChannel, QWidget *parent) :
 
     connect(m_webCallback, &WebCallback::sigOnItemClicked, this, &Dialog::onItemClicked);
     connect(m_webCallback, &WebCallback::sigOnTitleClicked, this, &Dialog::onTitleClicked);
+    connect(m_webCallback, &WebCallback::sigOnTitleScrollToBottom, this, &Dialog::onTitleScrollToBottom);
 
     this->setStyleSheet("#Dialog{background:rgb(161, 197, 241)}");
     this->setWindowTitle(tr("wchat hot"));
@@ -77,37 +81,62 @@ void Dialog::onTabClicked(int oldIndex, int newIndex)
     m_webArticle->setVisible(newIndex == 2);
 
     if (0 == newIndex && 2 != oldIndex) {
-        ArticleListRequest request;
-        QString url = request.getUrl();
-        url = QString::fromLocal8Bit(url.toLocal8Bit().toBase64());
-        QString script = QString("showArticleList") + "('" + url + "')";
-        m_webView->page()->runJavaScript(script);
+        requestCategoryList();
     } else if (1 == newIndex && 2 != oldIndex) {
-        onItemClicked(qMax(0, m_curTypeId));
-    } else if (2 == newIndex) {
-        if (m_webArticle->url() != m_curArticleUrl) {
-            m_webArticle->load(QUrl(m_curArticleUrl));
-        }
+        m_titleRequest.setPage(1);
+        requestTitleList();
     }
 }
 
 void Dialog::onItemClicked(int typeId)
 {
-    m_curTypeId = typeId;
-    ArticleTitleRequest request(typeId);
-    QString url = request.getUrl();
-    url = QString::fromLocal8Bit(url.toLocal8Bit().toBase64());
-    QString script = QString("showArticleTitle") + "('" + url + "')";
-    qDebug() << request.getUrl();
-    m_webView->page()->runJavaScript(script, [](const QVariant &data) {
-
-    });
+    m_titleRequest.setTypeId(typeId);
+    m_titleRequest.setPage(1);
     ui->tabWidget->setSelectedStyle(1);
+    requestTitleList();
 }
 
 void Dialog::onTitleClicked(const QString &url)
 {
     ui->tabWidget->setSelectedStyle(2);
-    m_curArticleUrl = url;
-    onTabClicked(1, 2);
+    m_webView->setVisible(false);
+    m_webArticle->setVisible(true);
+    if (m_webArticle->url() != url) {
+        m_webArticle->load(QUrl(url));
+    }
+}
+
+void Dialog::onTitleScrollToBottom()
+{
+    if (ui->tabWidget->currentIndex() == 1) {
+        int curPage = qMax(m_titleRequest.page(), 1);
+        int newPage = curPage + 1;
+        m_titleRequest.setPage(newPage);
+        requestTitleList();
+    }
+}
+
+void Dialog::requestCategoryList()
+{
+    ArticleListRequest request;
+    QString url = request.getUrl();
+    url = QString::fromLocal8Bit(url.toLocal8Bit().toBase64());
+    QString script = QString("showArticleList") + "('" + url + "')";
+    m_webView->page()->runJavaScript(script);
+}
+
+void Dialog::requestTitleList()
+{
+    QString url = m_titleRequest.getUrl();
+    QString base64Url = QString::fromLocal8Bit(url.toLocal8Bit().toBase64());
+    QString script;
+    if (m_titleRequest.page() > 1) {
+        script = QString("showArticleTitle") + "('" + base64Url + "', '1')";
+    } else {
+        script = QString("showArticleTitle") + "('" + base64Url + "')";
+    }
+    qDebug() << "request title list:" << url;
+    m_webView->page()->runJavaScript(script, [](const QVariant &data) {
+
+    });
 }

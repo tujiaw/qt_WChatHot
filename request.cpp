@@ -56,10 +56,12 @@ ArticleTitleRequest::ArticleTitleRequest(QObject *parent) : Request(parent)
     init();
 }
 
-ArticleTitleRequest::ArticleTitleRequest(int typeId, QObject *parent) : Request(parent)
+ArticleTitleRequest::ArticleTitleRequest(int typeId, const QString &key, int page, QObject *parent) : Request(parent)
 {
     init();
     m_typeId = typeId;
+    m_page = page;
+    m_key = key;
 }
 
 void ArticleTitleRequest::init()
@@ -68,7 +70,8 @@ void ArticleTitleRequest::init()
     m_signMethod = "md5";
     m_appId = 17262;
     m_secret = "21b693f98bd64e71a9bdbb5f7c76659c";
-    m_typeId = -1;
+    m_typeId = 0;
+    m_page = 1;
 }
 
 QString ArticleTitleRequest::getUrl()
@@ -78,6 +81,12 @@ QString ArticleTitleRequest::getUrl()
     argv << QPair<QString, QString>("showapi_timestamp", m_timestamp);
     if (m_typeId >= 0) {
         argv << QPair<QString, QString>("typeId", QString::number(m_typeId));
+    }
+    if (!m_key.isEmpty()) {
+        argv << QPair<QString, QString>("key", m_key);
+    }
+    if (m_page > 0) {
+        argv << QPair<QString, QString>("page", QString::number(m_page));
     }
 
     m_sign = getMd5(argv, m_secret);

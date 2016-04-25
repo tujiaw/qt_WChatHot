@@ -73,13 +73,22 @@
          });
     };
 
-    function showArticleTitle(url) {
+    function showArticleTitle(url, isAdd) {
         var url = atob(url);
         $.getJSON(url, function(data) {
             if (data.showapi_res_code === 0) {
-                clearAll();
+                if (typeof(isAdd) == 'undefined' || !isAdd) {
+                    clearAll();
+                }
                 var pagebean = data.showapi_res_body.pagebean;
                 $.each(pagebean.contentlist, function(index, item) {
+                    var findItem = $('div#contentRight>div#title').filter(function() {
+                        return this.innerHTML === item.title;
+                    });
+                    if (findItem.length > 0) {
+                        return true;
+                    }
+                    
                     var str = '<div class="articleTitle" value="{url}" onclick="articleTitleClick(this)">' +
                     '<img id="contentImg" src="{contentImg}"/>' +
                     '<div id="contentRight"><div id="userName">{userName}</div><div id="title">{title}</div></div>' +
@@ -131,7 +140,7 @@
     window.onscroll = function() {
         var pos = parseInt($(this).scrollTop()) + parseInt($(this).height());
         if (pos == $('div#content').height()) {
-            webCallback.onTest('xxxxx');
+            webCallback.onTitleSCrollToBottom();
         }
     }
 
